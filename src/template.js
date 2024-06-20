@@ -1,6 +1,19 @@
 import fs from "fs";
 
 const template = () => {
+  const games = fs.readdirSync("public/").reduce((acc, element) => {
+    acc[element] = {};
+    fs.readdirSync("public/" + element).forEach((file) => {
+      if (file.match(/info/i)) {
+        acc[element] = JSON.parse(fs.readFileSync("public/" + element + "/" + file));
+      }
+      if (file.match(/thumbnail/i)) {
+        acc[element].thumbnail = file;
+      }
+    });
+    return acc;
+  }, {});
+
   return (`
 <!DOCTYPE html>
 <html>
@@ -11,21 +24,14 @@ const template = () => {
     window.onload = () => {
       updateClock();
       updateHighscores();
+      updateSelectedGame();
       setInterval(updateClock, 1000);
-      setInterval(updateHighscores, 5000);
+      setInterval(updateHighscores, 8000);
       frameUpdate();
     }
 
     // Data
-    const games = ${JSON.stringify(fs.readdirSync("public/").reduce((acc, element) => {
-      const game = fs.readdirSync("public/" + element).find((e) => e.match(/info.json/i));
-      if (game) {
-        acc[element] = JSON.parse(fs.readFileSync("public/" + element + "/" + game));
-      } else {
-        acc[element] = undefined;
-      }
-      return acc;
-    }, {}))};
+    const games = ${JSON.stringify(games)};
     const gameNames = Object.keys(games);
     let currentGameHighscore = 0;
 
@@ -40,17 +46,29 @@ const template = () => {
 
     // Highscores
     const updateHighscores = () => {
-      currentGameHighscore = (currentGameHighscore + 1) % gameNames.length;
-      const game = games[gameNames[currentGameHighscore]];
-      const hscount = highscoreElements.length;
-
-      highscoreTitle.textContent = "Highscores sur " + game.name + ":";
-      game.highscores.forEach((highscore, index) => {
-        if (index < hscount) {
-          highscoreElements[index].querySelector('.hs-name').textContent = (index + 1) + ". " + highscore.name;
-          highscoreElements[index].querySelector('.hs-score').textContent = highscore.score;
+      highscoreWrapper.classList.remove('hs-popin');
+      highscoreWrapper.classList.add('hs-popout');
+      setTimeout(() => {
+        currentGameHighscore = (currentGameHighscore + 1) % gameNames.length;
+        let i = 0;
+        while (games[gameNames[currentGameHighscore]].highscores === undefined) { // Skip games without highscores
+          currentGameHighscore = (currentGameHighscore + 1) % gameNames.length;
+          if (i >= gameNames.length) return;
+          i++;
         }
-      });
+        const game = games[gameNames[currentGameHighscore]];
+        const hscount = highscoreElements.length;
+  
+        highscoreTitle.innerHTML = "Highscores sur <i>" + game.name + "</i> : ";
+        game.highscores.forEach((highscore, index) => {
+          if (index < hscount) {
+            highscoreElements[index].querySelector('.hs-name').textContent = (index + 1) + ". " + highscore.name;
+            highscoreElements[index].querySelector('.hs-score').textContent = highscore.score;
+          }
+        });
+        highscoreWrapper.classList.remove('hs-popout');
+        highscoreWrapper.classList.add('hs-popin');
+      }, 500);
     }
     
     // Gamepad navigation
@@ -132,8 +150,17 @@ const template = () => {
       }
       gameElements[selectedGame].classList.add('hover');
 
-      // Update info
       const game = games[gameNames[selectedGame]];
+
+      console.log(gameNames[selectedGame] + game.thumbnail);
+
+      if (game.thumbnail === undefined) {
+        gameBackground.style = \`background-image: linear-gradient(0deg, rgb(24, 24, 27) 0%, rgb(44,44,47) 20%, rgb(44,44,47) 80%, rgb(24, 24, 27) 100%)\`;
+      } else {
+        gameBackground.style = \`background-image: linear-gradient(0deg, rgba(24,24,27,1) 0%, rgba(24,24,27,0) 20%, rgba(24,24,27,0) 80%, rgba(24,24,27,1) 100%), url(/\${gameNames[selectedGame]}/\${game.thumbnail})\`
+      }
+
+      // Update info
       if (game !== undefined) {
         gameTitle.textContent = game.name ?? gameElements[selectedGame].getAttribute('link');
         gameDescription.textContent = game.description ?? "Ce jeu n'a pas de description.";
@@ -199,27 +226,59 @@ const template = () => {
       transform: scale(1.1);
       outline: 4px solid #faf0fc;
     }
+
+    .title {
+      display: none;
+    }
+
+    .hover .title {
+      margin-top: 1rem;
+      color: white;
+      display: block;
+    }
+
+    .hs-popout {
+      transition: 0.25s all;
+      transform: translateX(10%);
+      opacity: 0;
+      transition-timing-function: ease-out;
+    }
+    
+    .hs-popin {
+      transition: 0.25s all;
+      transform: translateX(0);
+      opacity: 1;
+      transition-timing-function: ease-out;
+    }
+
+    #game-caroussel-background {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: 1s all;
+      height: 680px;
+    }
   </style>
 </head>
 
 <body class="bg-zinc-900 text-zinc-100 mx-4 vh-100 vw-100 truncate">
-  <div
-    style="background: linear-gradient(0deg, rgba(24,24,27,1) 0%, rgba(24,24,27,0) 20%, rgba(24,24,27,0) 80%, rgba(24,24,27,1) 100%), url(http://127.0.0.1:3000/MMIFight/thumbnail.png);height:680px">
+  <div id="game-caroussel-background">
     <div class="flex justify-around p-5 mt-5">
       <div id="clock" class="text-4xl text-center lg:text-left font-bold"></div>
     </div>
     <section id="games" class="flex mx-auto py-10 relative overflow-x-scroll h-full">
-    ${fs.readdirSync("public/").map((element, index, array) => {
-      return `
-        <div link="${element}" class="grid place-content-center min-w-96 h-96 bg-white shadow-xl mx-5 hover:scale-110 transition-all">
-          <a href="/${element}" class="max-w-96 w-96 h-96 shadow-xl text-slate-700 text-center text-5xl font-bold bg-slate-600">
-            <img 
-              class="w-full h-full object-cover"
-              src="/${element}/${fs.readdirSync("public/" + element).find((e) => e.match(/thumbnail/i))}" alt="${element}"
-            >
-          </a>
-        </div>
-      `}).join('')}
+    ${Object.keys(games).map((element) => {
+        return `
+          <div link="${element}" class="grid place-content-center min-w-96 h-96 bg-white shadow-xl mx-5 hover:scale-110 transition-all">
+            <a href="/${element}" class="max-w-96 w-96 h-96 shadow-xl text-slate-700 text-center text-5xl font-bold bg-slate-600">
+              <img 
+                class="w-full h-full object-cover"
+                src="/${element}/${games[element].thumbnail}" alt="${element}"
+              >
+              <div class="title text-3xl text-center">${games[element].name}</div>
+            </a>
+          </div>`
+      }).join('')}
     </section>
   </div>
   <div class="w-full h-px bg-zinc-700 my-10"></div>
@@ -230,69 +289,67 @@ const template = () => {
       </div>
       <div class="flex">
         <div id="game-description" class="text-lg ml-5 mt-5 text-wrap">
-          Crossy est un jeu de plateforme en 2D où vous incarnez un canard qui doit traverser la route rejoindre son
-          étang. Il est plutôt loin cet étang, non ?
         </div>
         <div class="w-48"></div>
         <div class="w-48">
-          <div class="text-xl"><span class="font-bold">Créateur : </span><span id="game-creator">John Doe</span></div>
-          <div class="text-xl"><span class="font-bold">Année : </span><span id="game-year">2024</span></div>
-          <div class="text-xl"><span class="font-bold">Type : </span><span id="game-type">Arcade</span></div>
-          <div class="text-xl"><span class="font-bold">Joueurs : </span><span id="game-players">1</span></div>
+          <div class="text-xl"><span class="font-bold">Créateur : </span><span id="game-creator"></span></div>
+          <div class="text-xl"><span class="font-bold">Année : </span><span id="game-year"></span></div>
+          <div class="text-xl"><span class="font-bold">Type : </span><span id="game-type"></span></div>
+          <div class="text-xl"><span class="font-bold">Joueurs : </span><span id="game-players"></span></div>
         </div>
       </div>
     </div>
 
     <div id="game-highscores" class="h-full" style="width:32rem">
       <div>
-        <div id="game-highscore-title" class="text-lg">Highscores sur Crossy:</div>
+        <div id="game-highscore-title" class="text-lg"></div>
         <div class="flex mt-2">
-          <div class="mx-3" style="width:250px">
+          <div class="mx-3" style="width:220px">
             <div class="highscore flex justify-between" style="margin-bottom:0.2rem">
-              <div class="hs-name text-xl">1. John Doe</div>
-              <div class="hs-score font-bold text-lg">12500</div>
+              <div class="hs-name text-3xl"></div>
+              <div class="hs-score font-bold text-3xl"></div>
             </div>
-            <div class="highscore flex justify-between" style="margin-bottom:0.2rem">
-              <div class="hs-name text-xl">2. _____</div>
-              <div class="hs-score font-bold text-lg">0</div>
+            <div class="highscore flex justify-between ml-1" style="margin-bottom:0.2rem">
+              <div class="hs-name text-2xl"></div>
+              <div class="hs-score font-bold text-2xl"></div>
             </div>
-            <div class="highscore flex justify-between" style="margin-bottom:0.2rem">
-              <div class="hs-name text-xl">3. _____</div>
-              <div class="hs-score font-bold text-lg">0</div>
+            <div class="highscore flex justify-between ml-1" style="margin-bottom:0.2rem">
+              <div class="hs-name text-2xl"></div>
+              <div class="hs-score font-bold text-2xl"></div>
             </div>
-            <div class="highscore flex justify-between" style="margin-bottom:0.2rem">
-              <div class="hs-name text-xl">4. _____</div>
-              <div class="hs-score font-bold text-lg">0</div>
+            <div class="highscore flex justify-between ml-1" style="margin-bottom:0.2rem">
+              <div class="hs-name text-2xl"></div>
+              <div class="hs-score font-bold text-2xl"></div>
             </div>
-            <div class="highscore flex justify-between" style="margin-bottom:0.2rem">
-              <div class="hs-name text-xl">5. _____</div>
-              <div class="hs-score font-bold text-lg">0</div>
+            <div class="highscore flex justify-between ml-1" style="margin-bottom:0.2rem">
+              <div class="hs-name text-2xl"></div>
+              <div class="hs-score font-bold text-2xl"></div>
             </div>
           </div>
           <div class="mx-3" style="width:185px">
             <div class="highscore flex justify-between">
-              <div class="hs-name">6. _____</div>
-              <div class="hs-score font-bold">0</div>
+              <div class="hs-name"></div>
+              <div class="hs-score font-bold"></div>
             </div>
             <div class="highscore flex justify-between">
-              <div class="hs-name">7. _____</div>
-              <div class="hs-score font-bold">0</div>
+              <div class="hs-name"></div>
+              <div class="hs-score font-bold"></div>
             </div>
             <div class="highscore flex justify-between">
-              <div class="hs-name">8. _____</div>
-              <div class="hs-score font-bold">0</div>
+              <div class="hs-name"></div>
+              <div class="hs-score font-bold"></div>
             </div>
             <div class="highscore flex justify-between">
-              <div class="hs-name">9. _____</div>
-              <div class="hs-score font-bold">0</div>
+              <div class="hs-name"></div>
+              <div class="hs-score font-bold"></div>
             </div>
             <div class="highscore flex justify-between">
-              <div class="hs-name">10. _____</div>
-              <div class="hs-score font-bold">0</div>
+              <div class="hs-name"></div>
+              <div class="hs-score font-bold"></div>
             </div>
             <div class="highscore flex justify-between">
-              <div class="hs-name">11. _____</div>
-              <div class="hs-score font-bold">0</div>
+              <div class="hs-name"></div>
+              <div class="hs-score font-bold"></div>
             </div>
           </div>
         </div>
@@ -319,11 +376,13 @@ const template = () => {
       const gameYear = document.getElementById('game-year');
       const gameType = document.getElementById('game-type');
       const gamePlayers = document.getElementById('game-players');
+      const highscoreWrapper = document.getElementById('game-highscores');
       const highscoreElements = document.getElementsByClassName('highscore');
       const highscoreTitle = document.getElementById('game-highscore-title');
       const clock = document.getElementById('clock');
       const gamesSection = document.getElementById('games');
       const gameElements = gamesSection.children;
+      const gameBackground = document.getElementById('game-caroussel-background');
   </script>
 </body>
 </html>
