@@ -18,8 +18,8 @@ const template = () => {
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://cdn.tailwindcss.com"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="/output.css" rel="stylesheet">
   <script>
     window.onload = () => {
       updateClock();
@@ -59,7 +59,7 @@ const template = () => {
         const game = games[gameNames[currentGameHighscore]];
         const hscount = highscoreElements.length;
   
-        highscoreTitle.innerHTML = "Highscores sur <i>" + game.name + "</i> : ";
+        highscoreTitle.innerHTML = '<i class="text-3xl font-bold mr-1">' + game.name + "</i> Highscores : ";
         game.highscores.forEach((highscore, index) => {
           if (index < hscount) {
             highscoreElements[index].querySelector('.hs-name').textContent = (index + 1) + ". " + highscore.name;
@@ -152,8 +152,6 @@ const template = () => {
 
       const game = games[gameNames[selectedGame]];
 
-      console.log(gameNames[selectedGame] + game.thumbnail);
-
       if (game.thumbnail === undefined) {
         gameBackground.style = \`background-image: linear-gradient(0deg, rgb(24, 24, 27) 0%, rgb(44,44,47) 20%, rgb(44,44,47) 80%, rgb(24, 24, 27) 100%)\`;
       } else {
@@ -193,7 +191,6 @@ const template = () => {
     }
 
     const frameUpdate = () => {
-
       // Caroussel
       if (input.left.justPressed) {
         selectedGame = Math.max(0, selectedGame - 1);
@@ -209,56 +206,6 @@ const template = () => {
       window.requestAnimationFrame(frameUpdate);
     }
   </script>
-  <style>
-    section::-webkit-scrollbar {
-      display: none;
-    }
-
-    /* Hide scrollbar for IE, Edge and Firefox */
-    section {
-      -ms-overflow-style: none;
-      /* IE and Edge */
-      scrollbar-width: none;
-      /* Firefox */
-    }
-
-    .hover {
-      transform: scale(1.1);
-      outline: 4px solid #faf0fc;
-    }
-
-    .title {
-      display: none;
-    }
-
-    .hover .title {
-      margin-top: 1rem;
-      color: white;
-      display: block;
-    }
-
-    .hs-popout {
-      transition: 0.25s all;
-      transform: translateX(10%);
-      opacity: 0;
-      transition-timing-function: ease-out;
-    }
-    
-    .hs-popin {
-      transition: 0.25s all;
-      transform: translateX(0);
-      opacity: 1;
-      transition-timing-function: ease-out;
-    }
-
-    #game-caroussel-background {
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      transition: 1s all;
-      height: 680px;
-    }
-  </style>
 </head>
 
 <body class="bg-zinc-900 text-zinc-100 mx-4 vh-100 vw-100 truncate">
@@ -284,11 +231,9 @@ const template = () => {
   <div class="w-full h-px bg-zinc-700 my-10"></div>
   <section id="game-infos" class="flex justify-between">
     <div class="ml-8" style="max-width: 960px;">
-      <div id="game-title" class="text-4xl font-bold">
-        Crossy
-      </div>
+      <div id="game-title" class="text-4xl font-bold"></div>
       <div class="flex">
-        <div id="game-description" class="text-lg ml-5 mt-5 text-wrap">
+        <div id="game-description" class="text-lg ml-5 mt-5 text-wrap w-screen">
         </div>
         <div class="w-48"></div>
         <div class="w-48">

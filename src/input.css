@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+section::-webkit-scrollbar {
+  display: none;
+}
+
+section {
+  scrollbar-width: none;
+}
+
+.hover {
+  transform: scale(1.1);
+  outline: 4px solid #faf0fc;
+}
+
+.title {
+  display: none;
+}
+
+.hover .title {
+  margin-top: 1rem;
+  color: white;
+  display: block;
+}
+
+.hs-popout {
+  transition: 0.25s all;
+  transform: translateX(10%);
+  opacity: 0;
+  transition-timing-function: ease-out;
+}
+
+.hs-popin {
+  transition: 0.25s all;
+  transform: translateX(0);
+  opacity: 1;
+  transition-timing-function: ease-out;
+}
+
+#game-caroussel-background {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: 1s all;
+  height: 680px;
+}
