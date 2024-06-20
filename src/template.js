@@ -60,11 +60,11 @@ const template = () => {
         const hscount = highscoreElements.length;
   
         highscoreTitle.innerHTML = '<i class="text-3xl font-bold mr-1">' + game.name + "</i> Highscores : ";
-        game.highscores.forEach((highscore, index) => {
+        Object.keys(game.highscores).forEach((key, index) => {
           if (index < hscount) {
-            highscoreElements[index].querySelector('.hs-name').textContent = (index + 1) + ". " + highscore.name;
-            highscoreElements[index].querySelector('.hs-score').textContent = highscore.score;
-          }
+            highscoreElements[index].querySelector('.hs-name').textContent = (index + 1) + ". " + key;
+            highscoreElements[index].querySelector('.hs-score').textContent = game.highscores[key];
+          } else return;
         });
         highscoreWrapper.classList.remove('hs-popout');
         highscoreWrapper.classList.add('hs-popin');
@@ -222,7 +222,7 @@ const template = () => {
                 class="w-full h-full object-cover"
                 src="/${element}/${games[element].thumbnail}" alt="${element}"
               >
-              <div class="title text-3xl text-center">${games[element].name}</div>
+              <div class="title text-3xl text-center">${games[element].name ?? element}</div>
             </a>
           </div>`
       }).join('')}
