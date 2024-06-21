@@ -66,14 +66,22 @@ app.post('/api/', (req, res) => {
       if (!dataObj.highscores) {
         dataObj.highscores = {};
       }
+      if (!req.body.name.match(/^[a-zA-Z0-9*]{3,}$/)) {
+        res.status(400).json({ error: 'Name must be 3 alphanumeric characters.' });
+        return;
+      }
+      req.body.score = parseInt(req.body.score);
+      if (isNaN(req.body.score)) {
+        res.status(400).json({ error: 'Score must be a number.' });
+        return;
+      }
       // Set name to uppercase
       req.body.name = req.body.name.toUpperCase();
 
       if (!dataObj.highscores[req.body.name] || dataObj.highscores[req.body.name] < req.body.score) {
         dataObj.highscores[req.body.name] = req.body.score;
-        console.log(dataObj.highscores);
         // Order highscores by score
-        dataObj.highscores = Object.fromEntries(Object.entries(dataObj.highscores).sort(([,a],[,b]) => b-a));
+        const ordered = Object.entries(dataObj.highscores).sort((a, b) => b[1] - a[1]);
         fs.writeFile(`public/${game}/info.json`, JSON.stringify(dataObj), (err) => {
           if (err) {
             console.log(err);
