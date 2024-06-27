@@ -1,7 +1,18 @@
 import express from 'express';
 import template from './src/template.js';
 import config from './config.js';
-import fs from "fs";  
+import fs from "fs";
+
+const rudeNames = ["ASS","FUC","FUK","FUQ","FCK","COK","DIC","DIK","DIQ","DIX","DCK","PNS","PSY","FAG","FGT","NGR","NIG","CNT","SHT","CUM","CLT","JIZ","JZZ","GAY","GEI","GAI","VAG","VGN","FAP","PRN","JEW","PUS","TIT","KYS","KKK","SEX","SXX","XXX","NUT","LSD","ORL","ANL","PD","SLP","CON","BIT","NTM"];
+const transpositions = {"0":"O", "1":"I", "2":"Z", "3":"E", "4":"A", "5":"S", "6":"G", "7":"T"}
+
+const filter = (name) => {
+  name.toUpperCase();
+  name = name.split('').filter((char) => char !== "_").map((char) => transpositions[char] || char).join('');
+  if (rudeNames.includes(name))
+    return false
+  else return true;
+}
 
 const app = express();
 app.use(express.json());
@@ -50,7 +61,7 @@ app.post('/api/', (req, res) => {
     res.status(404).json({error:'Game not found.'});
     return;
   }
-  if (!req.body.name || !req.body.score) {
+  if (req.body.name === undefined || req.body.score === undefined) {
     res.status(400).json({error:'Name and score required in body of request.'});
     return;
   }
@@ -66,8 +77,8 @@ app.post('/api/', (req, res) => {
       if (!dataObj.highscores) {
         dataObj.highscores = {};
       }
-      if (!req.body.name.match(/^[a-zA-Z0-9*]{3,}$/)) {
-        res.status(400).json({ error: 'Name must be 3 alphanumeric characters.' });
+      if (!req.body.name.match(/^[a-zA-Z0-9♥_]{3,}$/)) {
+        res.status(400).json({ error: 'Name must be 3 alphanumeric characters (plus ♥_).' });
         return;
       }
       req.body.score = parseInt(req.body.score);
@@ -75,11 +86,14 @@ app.post('/api/', (req, res) => {
         res.status(400).json({ error: 'Score must be a number.' });
         return;
       }
-      // Set name to uppercase
-      req.body.name = req.body.name.toUpperCase();
+      const filteredName = filter(req.body.name);
+      if (!filteredName) {
+        res.status(400).json({ error: 'Name is not allowed.' });
+        return;
+      }
 
-      if (!dataObj.highscores[req.body.name] || dataObj.highscores[req.body.name] < req.body.score) {
-        dataObj.highscores[req.body.name] = req.body.score;
+      if (!dataObj.highscores[filteredName] || dataObj.highscores[filteredName] < req.body.score) {
+        dataObj.highscores[filteredName] = req.body.score;
         // Order highscores by score
         dataObj.highscores = Object.fromEntries(Object.entries(dataObj.highscores).sort((a, b) => b[1] - a[1]));
         fs.writeFile(`public/${game}/info.json`, JSON.stringify(dataObj), (err) => {
