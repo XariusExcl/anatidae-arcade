@@ -21,4 +21,4 @@ start server with `node server.js`
 - `/api/{gameName}` : POST (Body: `{name:string, score:number}`)
   - Returns `{error: [error description] }` on bad requests (400)
   - Returns `{success: false}` if existing highscore is higher
-  - Returns `{success: false}` on success
+  - Returns `{success: true}` on success
