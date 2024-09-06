@@ -230,13 +230,11 @@ const template = () => {
   </div>
   <div class="w-full h-px bg-zinc-700 my-10"></div>
   <section id="game-infos" class="flex justify-between">
-    <div class="ml-8" style="max-width: 960px;">
+    <div class="ml-8 w-3/5">
       <div id="game-title" class="text-4xl font-bold"></div>
       <div class="flex">
-        <div id="game-description" class="text-lg ml-5 mt-5 text-wrap w-screen">
-        </div>
-        <div class="w-48"></div>
-        <div class="w-48">
+        <div id="game-description" class="text-lg ml-5 mt-5 pr-5 whitespace-normal" style="width:960px;"></div>
+        <div style="width: 320px">
           <div class="text-xl"><span class="font-bold">Créateur : </span><span id="game-creator"></span></div>
           <div class="text-xl"><span class="font-bold">Année : </span><span id="game-year"></span></div>
           <div class="text-xl"><span class="font-bold">Type : </span><span id="game-type"></span></div>
