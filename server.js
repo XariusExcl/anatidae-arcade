@@ -11,7 +11,7 @@ const filter = (name) => {
   name = name.split('').filter((char) => char !== "_").map((char) => transpositions[char] || char).join('');
   if (rudeNames.includes(name))
     return false
-  else return true;
+  else return name;
 }
 
 const app = express();
@@ -92,22 +92,25 @@ app.post('/api/', (req, res) => {
         return;
       }
 
-      if (!dataObj.highscores.find(entry => entry.name == filteredName) || dataObj.highscores.find(entry => entry.name == filteredName).score < req.body.score) {
-        if (!dataObj.highscores.find(entry => entry.name == filteredName)) {
+      console.log(filteredName);
+      const entry = dataObj.highscores.find(entry => entry.name == filteredName);
+      console.log(entry);
+
+      if (!entry || entry.score < req.body.score) {
+        if (!entry) {
           dataObj.highscores.push({ name: filteredName, score: req.body.score });
         }
         else {
-          dataObj.highscores.find(entry => entry.name == filteredName).score = req.body.score;
+          entry.score = req.body.score;
         }
         dataObj.highscores = dataObj.highscores.sort((a, b) => b.score - a.score);
         fs.writeFile(`public/${game}/info.json`, JSON.stringify(dataObj), (err) => {
           if (err) {
             console.log(err);
           } else {
-            res.json({ success: true });S
+            res.json({ success: true });
           }
-        }
-        );
+        });
       }
       else {
         res.json({ success: false });
