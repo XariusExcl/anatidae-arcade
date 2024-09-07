@@ -58,14 +58,12 @@ const template = () => {
         }
         const game = games[gameNames[currentGameHighscore]];
         const hscount = highscoreElements.length;
-  
+
         highscoreTitle.innerHTML = '<i class="text-3xl font-bold mr-1">' + game.name + "</i> Highscores : ";
-        Object.keys(game.highscores).forEach((key, index) => {
-          if (index < hscount) {
-            highscoreElements[index].querySelector('.hs-name').textContent = (index + 1) + ". " + key;
-            highscoreElements[index].querySelector('.hs-score').textContent = game.highscores[key];
-          } else return;
-        });
+        for (let i = 0; (i < hscount && i < game.highscores.length); i++) {
+          highscoreElements[i].querySelector('.hs-name').textContent = game.highscores[i].name ?? '???';
+          highscoreElements[i].querySelector('.hs-score').textContent = game.highscores[i].score ?? '???';
+        }
         highscoreWrapper.classList.remove('hs-popout');
         highscoreWrapper.classList.add('hs-popin');
       }, 500);
