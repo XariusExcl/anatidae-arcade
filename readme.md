@@ -16,7 +16,7 @@ start server with `node server.js`
 
 - `/api/{gameName}` : GET
   - Returns `{error: [error description] }` on bad requests (400)
-  - Returns the highscores in a key-value array.
+  - Returns the highscores as an array of objects `{name:string, score:number}`.
 
 - `/api/{gameName}` : POST (Body: `{name:string, score:number}`)
   - Returns `{error: [error description] }` on bad requests (400)
