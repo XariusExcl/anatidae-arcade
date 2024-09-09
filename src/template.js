@@ -131,14 +131,12 @@ const template = () => {
       if (gamepad.buttons[1].pressed && !input.cancel.state)
         input.cancel.justPressed = true;
       
-      gamepad.axes[1] == 1 ? input.up.state = true : input.up.state = false;
-      gamepad.axes[1] == -1 ? input.down.state = true : input.down.state = false;
-      gamepad.axes[0] == -1 ? input.left.state = true : input.left.state = false;
-      gamepad.axes[0] == 1 ? input.right.state = true : input.right.state = false;
-      gamepad.buttons[0].pressed ? input.validate.state = true : input.validate.state = false;
-      gamepad.buttons[1].pressed ? input.cancel.state = true : input.cancel.state = false;
-
-      window.requestAnimationFrame(pollGamepad);
+      input.up.state = gamepad.axes[1] == 1;
+      input.down.state = gamepad.axes[1] == -1;
+      input.left.state = gamepad.axes[0] == -1;
+      input.right.state = gamepad.axes[0] == 1;
+      input.validate.state = gamepad.buttons[0].pressed;
+      input.cancel.state = gamepad.buttons[1].pressed;
     }
 
     let selectedGame = 0;
@@ -192,6 +190,7 @@ const template = () => {
 
     const frameUpdate = () => {
       // Caroussel
+      pollGamepad();
       if (input.left.justPressed) {
         selectedGame = Math.max(0, selectedGame - 1);
         updateSelectedGame();
@@ -201,11 +200,15 @@ const template = () => {
         updateSelectedGame();
       }
       if (input.validate.justPressed) {
+        // TODO : fixme
+        input.validate.justPressed = false;
         fetch('/api/playcount?game=' + gameNames[selectedGame], {
           method: 'POST'
+        }).catch((err) => {
+          console.error(err)
+        }).finally(() => {
+          window.location.href = '/' + gameElements[selectedGame].getAttribute('link');
         });
-        console.log('/api/playcount?game=' + gameNames[selectedGame]);
-        // window.location.href = '/' + gameElements[selectedGame].getAttribute('link');
       }
       window.requestAnimationFrame(frameUpdate);
     }
