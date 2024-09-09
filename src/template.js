@@ -103,36 +103,36 @@ const template = () => {
         input[key].justReleased = false;
       }
       
-      if (input.up.state && !gamepad.buttons[12].pressed)
+      if (input.up.state && !gamepad.axes[1] == 1)
         input.up.justReleased = true;
-      if (input.down.state && !gamepad.buttons[13].pressed)
+      if (input.down.state && !gamepad.axes[1] == -1)
         input.down.justReleased = true;
-      if (input.left.state && !gamepad.buttons[14].pressed)
+      if (input.left.state && !gamepad.axes[0] == -1)
         input.left.justReleased = true;
-      if (input.right.state && !gamepad.buttons[15].pressed)
+      if (input.right.state && !gamepad.axes[0] == 1)
         input.right.justReleased = true;
       if (input.validate.state && !gamepad.buttons[0].pressed)
         input.validate.justReleased = true;
       if (input.cancel.state && !gamepad.buttons[1].pressed)
         input.cancel.justReleased = true;
 
-      if (gamepad.buttons[12].pressed && !input.up.state)
+      if (gamepad.axes[1] == 1 && !input.up.state)
         input.up.justPressed = true;
-      if (gamepad.buttons[13].pressed && !input.down.state)
+      if (gamepad.axes[1] == -1 && !input.down.state)
         input.down.justPressed = true;
-      if (gamepad.buttons[14].pressed && !input.left.state)
+      if (gamepad.axes[0] == -1 && !input.left.state)
         input.left.justPressed = true;
-      if (gamepad.buttons[15].pressed && !input.right.state)
+      if (gamepad.axes[0] == 1 && !input.right.state)
         input.right.justPressed = true;
       if (gamepad.buttons[0].pressed && !input.validate.state)
         input.validate.justPressed = true;
       if (gamepad.buttons[1].pressed && !input.cancel.state)
         input.cancel.justPressed = true;
       
-      gamepad.buttons[12].pressed ? input.up.state = true : input.up.state = false;
-      gamepad.buttons[13].pressed ? input.down.state = true : input.down.state = false;
-      gamepad.buttons[14].pressed ? input.left.state = true : input.left.state = false;
-      gamepad.buttons[15].pressed ? input.right.state = true : input.right.state = false;
+      gamepad.axes[1] == 1 ? input.up.state = true : input.up.state = false;
+      gamepad.axes[1] == -1 ? input.down.state = true : input.down.state = false;
+      gamepad.axes[0] == -1 ? input.left.state = true : input.left.state = false;
+      gamepad.axes[0] == 1 ? input.right.state = true : input.right.state = false;
       gamepad.buttons[0].pressed ? input.validate.state = true : input.validate.state = false;
       gamepad.buttons[1].pressed ? input.cancel.state = true : input.cancel.state = false;
 
