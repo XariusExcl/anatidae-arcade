@@ -79,6 +79,8 @@ const template = () => {
         e.gamepad.buttons.length,
         e.gamepad.axes.length,
       );
+      if (gamepad != null)
+        return;
 
       gamepad = e.gamepad;
 
@@ -199,7 +201,11 @@ const template = () => {
         updateSelectedGame();
       }
       if (input.validate.justPressed) {
-        window.location.href = '/' + gameElements[selectedGame].getAttribute('link');
+        fetch('/api/playcount?game=' + gameNames[selectedGame], {
+          method: 'POST'
+        });
+        console.log('/api/playcount?game=' + gameNames[selectedGame]);
+        // window.location.href = '/' + gameElements[selectedGame].getAttribute('link');
       }
       window.requestAnimationFrame(frameUpdate);
     }

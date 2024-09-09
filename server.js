@@ -119,5 +119,39 @@ app.post('/api/', (req, res) => {
   });
 });
 
+app.post('/api/playcount', (req, res) => {
+  const game = req.query.game;
+  if (!game) {
+    res.status(400).json({ error: 'No game specified.' });
+    return;
+  }
+  if (!fs.existsSync(`public/${game}`)) {
+    res.status(404).json({ error: 'Game not found.' });
+    return;
+  }
+  if (!fs.existsSync(`public/${game}/info.json`)) {
+    res.status(404).json({ error: 'info.json not found' });
+    return;
+  }
+  fs.readFile(`public/${game}/info.json`, (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      const dataObj = JSON.parse(data.toString());
+      if (!dataObj.playcount) {
+        dataObj.playcount = 0;
+      }
+      dataObj.playcount++;
+      fs.writeFile(`public/${game}/info.json`, JSON.stringify(dataObj), (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json({ success: true });
+        }
+      });
+    }
+  });
+});
+
 app.listen(config.port);
 console.log(`👾 Arcade listening on port ${config.port}.`);
