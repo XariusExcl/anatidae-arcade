@@ -60,9 +60,14 @@ const template = () => {
         const hscount = highscoreElements.length;
 
         highscoreTitle.innerHTML = '<i class="text-3xl font-bold mr-1">' + game.name + "</i> Highscores : ";
-        for (let i = 0; (i < hscount && i < game.highscores.length); i++) {
-          highscoreElements[i].querySelector('.hs-name').textContent = game.highscores[i].name ?? '???';
-          highscoreElements[i].querySelector('.hs-score').textContent = game.highscores[i].score ?? '???';
+        for (let i = 0; i < hscount; i++) {
+          if (i < game.highscores.length) {
+            highscoreElements[i].querySelector('.hs-name').textContent = game.highscores[i].name ?? '???';
+            highscoreElements[i].querySelector('.hs-score').textContent = game.highscores[i].score ?? '???';
+          } else {
+            highscoreElements[i].querySelector('.hs-name').textContent = ''
+            highscoreElements[i].querySelector('.hs-score').textContent = '';
+          }
         }
         highscoreWrapper.classList.remove('hs-popout');
         highscoreWrapper.classList.add('hs-popin');
