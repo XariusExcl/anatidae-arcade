@@ -5,12 +5,11 @@ The backend for Anatidae.
 ## Prerequisites 
 - NodeJS, npm
 
-## Install
-- npm install
-- create a public/ folder in the root
+## Installation
+- `npm install`
 
 ## Usage
-start server with `node server.js`
+Start server with `node server.js`
 
 ## API Documentation
 
