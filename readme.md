@@ -17,7 +17,7 @@ Start server with `node server.js`
   - Returns `{error: [error description] }` on bad requests (400)
   - Returns the highscores as an array of objects `{name:string, score:number}`.
 
-- `/api/{gameName}` : POST (Body: `{name:string, score:number}`)
+- `/api/?game={gameName}` : POST (Body: `{name:string, score:number}`)
   - Returns `{error: [error description] }` on bad requests (400)
   - Returns `{success: false}` if existing highscore is higher
   - Returns `{success: true}` on success
