@@ -13,7 +13,7 @@ Start server with `node server.js`
 
 ## API Documentation
 
-- `/api/{gameName}` : GET
+- `/api/?game={gameName}` : GET
   - Returns `{error: [error description] }` on bad requests (400)
   - Returns the highscores as an array of objects `{name:string, score:number}`.
 
