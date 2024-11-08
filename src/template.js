@@ -86,37 +86,26 @@ const template = () => {
     });
 
     const input = {
-      up: { state: false, justPressed: false, justReleased: false},
-      down: { state: false, justPressed: false, justReleased: false},
-      left: { state: false, justPressed: false, justReleased: false},
-      right: { state: false, justPressed: false, justReleased: false},
-      validate: { state: false, justPressed: false, justReleased: false},
-      cancel: { state: false, justPressed: false, justReleased: false}
+      up: { state: false, justPressed: false, justReleased: false, bind: () => { return gamepad.axes[1] == 1 }},
+      down: { state: false, justPressed: false, justReleased: false, bind: () => { return gamepad.axes[1] == -1 }},
+      left: { state: false, justPressed: false, justReleased: false, bind: () => { return gamepad.axes[0] == -1 }},
+      right: { state: false, justPressed: false, justReleased: false, bind: () => { return gamepad.axes[0] == 1 }},
+      validate: { state: false, justPressed: false, justReleased: false, bind: () => { return gamepad.buttons[0].pressed }},
+      cancel: { state: false, justPressed: false, justReleased: false, bind: () => { return gamepad.buttons[1].pressed }}
     };
     const pollGamepad = () =>
     {
       if (gamepad == null) return;
-      
-      input.up.justReleased = (input.up.state && !gamepad.axes[1] == 1);
-      input.down.justReleased = (input.down.state && !gamepad.axes[1] == -1);
-      input.left.justReleased = (input.left.state && !gamepad.axes[0] == -1);
-      input.right.justReleased = (input.right.state && !gamepad.axes[0] == 1);
-      input.validate.justReleased = (input.validate.state && !gamepad.buttons[0].pressed);
-      input.cancel.justReleased = (input.cancel.state && !gamepad.buttons[1].pressed);
 
-      input.up.justPressed = (gamepad.axes[1] == 1 && !input.up.state);
-      input.down.justPressed = (gamepad.axes[1] == -1 && !input.down.state);
-      input.left.justPressed = (gamepad.axes[0] == -1 && !input.left.state);
-      input.right.justPressed = (gamepad.axes[0] == 1 && !input.right.state);
-      input.validate.justPressed = (gamepad.buttons[0].pressed && !input.validate.state);
-      input.cancel.justPressed = (gamepad.buttons[1].pressed && !input.cancel.state);
-      
-      input.up.state = gamepad.axes[1] == 1;
-      input.down.state = gamepad.axes[1] == -1;
-      input.left.state = gamepad.axes[0] == -1;
-      input.right.state = gamepad.axes[0] == 1;
-      input.validate.state = gamepad.buttons[0].pressed;
-      input.cancel.state = gamepad.buttons[1].pressed;
+      for (const [key, value] of Object.entries(input)) {
+        const bind = value.bind();
+        if (value.state != bind) {
+          value.state = value.justPressed = bind;
+          value.justReleased = !bind;
+        }
+        else
+          value.justPressed = value.justReleased = false;
+      }
     }
 
     let selectedGame = 0;
