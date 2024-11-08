@@ -97,7 +97,7 @@ const template = () => {
     {
       if (gamepad == null) return;
 
-      for (const [key, value] of Object.entries(input)) {
+      Object.values(input).forEach((value) => {
         const bind = value.bind();
         if (value.state != bind) {
           value.state = value.justPressed = bind;
@@ -105,7 +105,7 @@ const template = () => {
         }
         else
           value.justPressed = value.justReleased = false;
-      }
+      });
     }
 
     let selectedGame = 0;
