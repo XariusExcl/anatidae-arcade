@@ -26,7 +26,6 @@ const template = () => {
       updateHighscores();
       updateSelectedGame();
       setInterval(updateClock, 1000);
-      setInterval(updateHighscores, 8000);
       frameUpdate();
     }
 
@@ -41,15 +40,14 @@ const template = () => {
       const hours = now.getHours().toString().padStart(2, '0');
       const minutes = now.getMinutes().toString().padStart(2, '0');
       const seconds = now.getSeconds().toString().padStart(2, '0');
-      clock.textContent = hours + ":" + minutes + ":" + seconds;
+      clockElement.textContent = hours + ":" + minutes + ":" + seconds;
     }
 
     // Highscores
     const updateHighscores = () => {
-      highscoreWrapper.classList.remove('hs-popin');
-      highscoreWrapper.classList.add('hs-popout');
+      highscoreWrapperElement.classList.remove('hs-popin');
+      highscoreWrapperElement.classList.add('hs-popout');
       setTimeout(() => {
-        currentGameHighscore = (currentGameHighscore + 1) % gameNames.length;
         let i = 0;
         while (games[gameNames[currentGameHighscore]].highscores === undefined || games[gameNames[currentGameHighscore]].highscores.length === 0 ) { // Skip games without highscores
           currentGameHighscore = (currentGameHighscore + 1) % gameNames.length;
@@ -59,7 +57,7 @@ const template = () => {
         const game = games[gameNames[currentGameHighscore]];
         const hscount = highscoreElements.length;
 
-        highscoreTitle.innerHTML = '<i class="text-3xl font-bold mr-1">' + game.name + "</i> Highscores : ";
+        highscoreTitleElement.innerHTML = '<i class="text-3xl font-bold mr-1">' + game.name + "</i> Highscores : ";
         for (let i = 0; i < hscount; i++) {
           if (i < game.highscores.length) {
             highscoreElements[i].querySelector('.hs-name').textContent = game.highscores[i].name ?? '???';
@@ -69,8 +67,8 @@ const template = () => {
             highscoreElements[i].querySelector('.hs-score').textContent = '';
           }
         }
-        highscoreWrapper.classList.remove('hs-popout');
-        highscoreWrapper.classList.add('hs-popin');
+        highscoreWrapperElement.classList.remove('hs-popout');
+        highscoreWrapperElement.classList.add('hs-popin');
       }, 500);
     }
     
@@ -120,27 +118,31 @@ const template = () => {
       const game = games[gameNames[selectedGame]];
 
       if (game.thumbnail === undefined) {
-        gameBackground.style = \`background-image: linear-gradient(0deg, rgb(24, 24, 27) 0%, rgb(44,44,47) 20%, rgb(44,44,47) 80%, rgb(24, 24, 27) 100%)\`;
+        gameBackgroundElement.style = \`background-image: linear-gradient(0deg, rgb(24, 24, 27) 0%, rgb(44,44,47) 20%, rgb(44,44,47) 80%, rgb(24, 24, 27) 100%)\`;
       } else {
-        gameBackground.style = \`background-image: linear-gradient(0deg, rgba(24,24,27,1) 0%, rgba(24,24,27,0) 20%, rgba(24,24,27,0) 80%, rgba(24,24,27,1) 100%), url(/\${gameNames[selectedGame]}/\${game.thumbnail})\`
+        gameBackgroundElement.style = \`background-image: linear-gradient(0deg, rgba(24,24,27,1) 0%, rgba(24,24,27,0) 20%, rgba(24,24,27,0) 80%, rgba(24,24,27,1) 100%), url(/\${gameNames[selectedGame]}/\${game.thumbnail})\`
       }
 
       // Update info
       if (game !== undefined) {
-        gameTitle.textContent = game.name ?? gameElements[selectedGame].getAttribute('link');
-        gameDescription.textContent = game.description ?? "Ce jeu n'a pas de description.";
-        gameCreator.textContent = game.creator ?? "???";
-        gameYear.textContent = game.year ?? "???";
-        gameType.textContent = game.type ?? "???";
-        gamePlayers.textContent = game.players ?? "???";
+        gameTitleElement.textContent = game.name ?? gameElements[selectedGame].getAttribute('link');
+        gameDescriptionElement.textContent = game.description ?? "Ce jeu n'a pas de description.";
+        gameCreatorElement.textContent = game.creator ?? "???";
+        gameYearElement.textContent = game.year ?? "???";
+        gameTypeElement.textContent = game.type ?? "???";
+        gamePlayersElement.textContent = game.players ?? "???";
       } else {
-        gameTitle.textContent = gameElements[selectedGame].getAttribute('link');
-        gameDescription.textContent = "Ce jeu n'a pas de description.";
-        gameCreator.textContent = "???";
-        gameYear.textContent = "???";
-        gameType.textContent = "???";
-        gamePlayers.textContent = "???";
+        gameTitleElement.textContent = gameElements[selectedGame].getAttribute('link');
+        gameDescriptionElement.textContent = "Ce jeu n'a pas de description.";
+        gameCreatorElement.textContent = "???";
+        gameYearElement.textContent = "???";
+        gameTypeElement.textContent = "???";
+        gamePlayersElement.textContent = "???";
       }
+
+      // Update highscores
+      currentGameHighscore = selectedGame;
+      updateHighscores();
 
       targetScroll = Math.min(Math.max(424 * selectedGame + 212 - 960, 0), gamesSection.scrollWidth - gamesSection.clientWidth);
       smoothGameScroll();
@@ -157,18 +159,92 @@ const template = () => {
       }
     }
 
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowLeft':
+          input.left.justPressed = input.left.status = true;
+          break;
+        case 'ArrowRight':
+          input.right.justPressed = input.right.status = true;
+          break;
+        case 'ArrowUp':
+          input.up.justPressed = input.up.status = true;
+          break;
+        case 'ArrowDown':
+          input.down.justPressed = input.down.status = true;
+          break;
+        case 'Enter':
+          input.validate.justPressed = input.validate.status = true;
+          break;
+        case 'Escape':
+          input.cancel.justPressed = input.cancel.status = true;
+          break;
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      switch (e.key) {
+        case 'ArrowLeft':
+          input.left.justReleased = input.left.status = false;
+          break;
+        case 'ArrowRight':
+          input.right.justReleased = input.right.status = false;
+          break;
+        case 'ArrowUp':
+          input.up.justReleased = input.up.status = false;
+          break;
+        case 'ArrowDown':
+          input.down.justReleased = input.down.status = false;
+          break;
+        case 'Enter':
+          input.validate.justReleased = input.validate.status = false;
+          break;
+        case 'Escape':
+          input.cancel.justReleased = input.cancel.status = false;
+          break;
+      }
+    });
+
+    const keyboardReset = () => {
+      input.up.justPressed = input.up.justReleased = false;
+      input.down.justPressed = input.down.justReleased = false;
+      input.left.justPressed = input.left.justReleased = false;
+      input.right.justPressed = input.right.justReleased = false;
+      input.validate.justPressed = input.validate.justReleased = false;
+      input.cancel.justPressed = input.cancel.justReleased = false;
+    }
+
+    let scrollHighscoreTimer = 0;
+    let lastUpdateTime = Date.now();
+
     const frameUpdate = () => {
-      // Caroussel
+      const deltaTime = Date.now() - lastUpdateTime;
+      scrollHighscoreTimer += deltaTime;
+
+      if (scrollHighscoreTimer > 8000) {
+        scrollHighscoreTimer = 0;
+        currentGameHighscore = (currentGameHighscore + 1) % gameNames.length;
+        updateHighscores();
+      }
+
       pollGamepad();
       if (input.left.justPressed) {
-        selectedGame = Math.max(0, selectedGame - 1);
-        updateSelectedGame();
+        if (selectedGame != 0) {
+          scrollHighscoreTimer = 0;
+          selectedGame = selectedGame - 1;
+          updateSelectedGame();
+        };
       }
       if (input.right.justPressed) {
-        selectedGame = Math.min(gamesSection.children.length - 1, selectedGame + 1);
-        updateSelectedGame();
+        if (selectedGame != gamesSection.children.length - 1) {
+          scrollHighscoreTimer = 0;
+          selectedGame = selectedGame + 1;
+          updateSelectedGame();
+        }
       }
       if (input.validate.justPressed) {
+        scrollHighscoreTimer = 0;
         // TODO : fixme
         input.validate.justPressed = false;
         fetch('/api/playcount?game=' + gameNames[selectedGame], {
@@ -179,6 +255,8 @@ const template = () => {
           window.location.href = '/' + gameElements[selectedGame].getAttribute('link');
         });
       }
+      keyboardReset();
+      lastUpdateTime = Date.now();
       window.requestAnimationFrame(frameUpdate);
     }
   </script>
@@ -206,15 +284,15 @@ const template = () => {
   </div>
   <div class="w-full h-px bg-zinc-700 my-10"></div>
   <section id="game-infos" class="flex justify-between">
-    <div class="ml-8 w-3/5">
+    <div class="ml-8 w-4/6">
       <div id="game-title" class="text-4xl font-bold"></div>
       <div class="flex">
         <div id="game-description" class="text-lg ml-5 mt-5 pr-5 whitespace-normal" style="width:960px;"></div>
-        <div style="width: 320px">
-          <div class="text-xl"><span class="font-bold">Créateur : </span><span id="game-creator"></span></div>
+        <div style="width: 420px">
+          <div class="text-xl"><span class="font-bold">Créateur(s) : </span><span id="game-creator" class="text-wrap"></span></div>
           <div class="text-xl"><span class="font-bold">Année : </span><span id="game-year"></span></div>
           <div class="text-xl"><span class="font-bold">Type : </span><span id="game-type"></span></div>
-          <div class="text-xl"><span class="font-bold">Joueurs : </span><span id="game-players"></span></div>
+          <div class="text-xl"><span class="font-bold">Joueur(s) : </span><span id="game-players"></span></div>
         </div>
       </div>
     </div>
@@ -282,26 +360,26 @@ const template = () => {
       <img src="forward.png" style="max-width:32px;max-height:32px;" />
       <span style="align-self:center;"> Navigation</span>
     </div>
-    <div class="text-sm" style="align-self:center;">Anatidae Arcade - IUT de Troyes</div>
+    <div class="text-sm" style="align-self:center; margin-left:-100px">Anatidae Arcade - IUT de Troyes</div>
     <div class="flex text-xl">
       <span style="align-self:center;"> Valider</span>
       <img src="button1.png" style="max-width:32px;max-height:32px;" />
     </div>
   </footer>
   <script>
-      const gameTitle = document.getElementById('game-title');
-      const gameDescription = document.getElementById('game-description');
-      const gameCreator = document.getElementById('game-creator');
-      const gameYear = document.getElementById('game-year');
-      const gameType = document.getElementById('game-type');
-      const gamePlayers = document.getElementById('game-players');
-      const highscoreWrapper = document.getElementById('game-highscores');
+      const gameTitleElement = document.getElementById('game-title');
+      const gameDescriptionElement = document.getElementById('game-description');
+      const gameCreatorElement = document.getElementById('game-creator');
+      const gameYearElement = document.getElementById('game-year');
+      const gameTypeElement = document.getElementById('game-type');
+      const gamePlayersElement = document.getElementById('game-players');
+      const highscoreWrapperElement = document.getElementById('game-highscores');
       const highscoreElements = document.getElementsByClassName('highscore');
-      const highscoreTitle = document.getElementById('game-highscore-title');
-      const clock = document.getElementById('clock');
+      const highscoreTitleElement = document.getElementById('game-highscore-title');
+      const clockElement = document.getElementById('clock');
       const gamesSection = document.getElementById('games');
       const gameElements = gamesSection.children;
-      const gameBackground = document.getElementById('game-caroussel-background');
+      const gameBackgroundElement = document.getElementById('game-caroussel-background');
   </script>
 </body>
 </html>
