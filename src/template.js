@@ -10,6 +10,9 @@ const template = () => {
       if (file.match(/thumbnail/i)) {
         acc[element].thumbnail = file;
       }
+      if (file.match(/^.+\.mp4/i)) {
+        acc[element].video = file;
+      }
     });
     return acc;
   }, {});
@@ -70,6 +73,36 @@ const template = () => {
         highscoreWrapperElement.classList.remove('hs-popout');
         highscoreWrapperElement.classList.add('hs-popin');
       }, 500);
+    }
+
+    // Attract Mode
+    let isAttractMode = false;
+    const gamesVithVideo = gameNames.filter((game) => games[game].video !== undefined);
+    const showAttractMode = () => {
+      // Pick a random video from the games array, if it has a video attribute
+      const attactModeGame = gamesVithVideo[Math.floor(Math.random() * gamesVithVideo.length)];
+      const videoSrc = '/' + attactModeGame + '/' + games[attactModeGame].video;
+      // Add it to src of video el
+      videoPlayerElement.src = videoSrc;
+      // Fill divs with the info
+      videoTitleElement.innerText = games[attactModeGame].name ?? attactModeGame;
+      videoCatchphraseElement.innerText = games[attactModeGame].catchphrase ?? "Jouez maintenant !";
+      // Show div
+      videoWrapperElement.classList.remove('fade-out');
+      videoWrapperElement.classList.add('fade-in');
+      // Set some global flag to hide video when action is performed
+      isAttractMode = true;
+
+      // Set timeout to hide
+      setTimeout(() => {
+        hideAttractMode();
+        isAttractMode = false;
+      }, 19000);
+    }
+
+    const hideAttractMode = () => {
+      videoWrapperElement.classList.remove('fade-in');
+      videoWrapperElement.classList.add('fade-out');
     }
     
     // Gamepad navigation
@@ -215,17 +248,24 @@ const template = () => {
       input.cancel.justPressed = input.cancel.justReleased = false;
     }
 
+    // Update
     let scrollHighscoreTimer = 0;
+    let attractModeTimer = 0;
     let lastUpdateTime = Date.now();
-
     const frameUpdate = () => {
       const deltaTime = Date.now() - lastUpdateTime;
       scrollHighscoreTimer += deltaTime;
+      attractModeTimer += deltaTime;
 
       if (scrollHighscoreTimer > 8000) {
         scrollHighscoreTimer = 0;
         currentGameHighscore = (currentGameHighscore + 1) % gameNames.length;
         updateHighscores();
+      }
+      
+      if (attractModeTimer > 60000) {
+        attractModeTimer = 0;
+        showAttractMode();
       }
 
       pollGamepad();
@@ -255,6 +295,12 @@ const template = () => {
           window.location.href = '/' + gameElements[selectedGame].getAttribute('link');
         });
       }
+
+      if (isAttractMode && (input.up.justPressed || input.down.justPressed || input.left.justPressed || input.right.justPressed || input.validate.justPressed || input.cancel.justPressed)) {
+        attractModeTimer = 0;
+        hideAttractMode();
+      }
+
       keyboardReset();
       lastUpdateTime = Date.now();
       window.requestAnimationFrame(frameUpdate);
@@ -353,6 +399,12 @@ const template = () => {
       </div>
     </div>
   </section>
+  <div id="video-wrapper" class="fade-out absolute z-1 w-full h-full top-0 left-0">
+    <video id="video-player" height="1080" width="1920" autoplay muted loop src="testgame/sample.mp4" class="absolute z-1 w-full h-full top-0 left-0"></video>
+    <div id="video-title" class="absolute z-1 top-10 left-10 text-7xl font-bold bg-gray-950 bg-opacity-80 p-5 rounded-2xl">Wreckless Bar</div>
+    <div id="video-catchphrase" class="absolute z-1 top-40 left-24 text-4xl font-bold bg-gray-950 bg-opacity-80 p-5 rounded-2xl">Jouez maintenant !</div>
+    <div class="absolute bottom-40 left-40 text-8xl font-bold bg-gray-950 bg-opacity-80 pt-10 pb-14 pl-6 pr-9 rounded-full animate-bounce flex"><img src="joystickUp.png" style="width:96px;height:96px;"/><span>↓</span></div>
+  </div>
   <footer class="flex absolute bottom-0 w-full py-3 pl-8 pr-16 text-center border-t border-zinc-700 justify-between">
     <div class="flex text-xl">
       <img src="backward.png" style="max-width:32px;max-height:32px;" />
@@ -380,6 +432,10 @@ const template = () => {
       const gamesSection = document.getElementById('games');
       const gameElements = gamesSection.children;
       const gameBackgroundElement = document.getElementById('game-caroussel-background');
+      const videoWrapperElement = document.getElementById('video-wrapper');
+      const videoPlayerElement = document.getElementById('video-player');
+      const videoTitleElement = document.getElementById('video-title');
+      const videoCatchphraseElement = document.getElementById('video-catchphrase');
   </script>
 </body>
 </html>

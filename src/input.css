@@ -39,6 +39,16 @@ section {
   transition-timing-function: ease-out;
 }
 
+.fade-in {
+  opacity: 1;
+  transition: 1s all;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: 1s all;
+}
+
 #game-caroussel-background {
   background-size: cover;
   background-position: center;
