@@ -79,6 +79,7 @@ const template = () => {
     let isAttractMode = false;
     const gamesVithVideo = gameNames.filter((game) => games[game].video !== undefined);
     const showAttractMode = () => {
+      if (gamesVithVideo.length === 0) return;
       // Pick a random video from the games array, if it has a video attribute
       const attactModeGame = gamesVithVideo[Math.floor(Math.random() * gamesVithVideo.length)];
       const videoSrc = '/' + attactModeGame + '/' + games[attactModeGame].video;
