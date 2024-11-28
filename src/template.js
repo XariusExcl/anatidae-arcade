@@ -5,7 +5,7 @@ const template = () => {
     acc[element] = {};
     fs.readdirSync("public/" + element).forEach((file) => {
       if (file.match(/^info\.json/i)) {
-        acc[element] = JSON.parse(fs.readFileSync("public/" + element + "/" + file));
+        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)), ...acc[element]};
       }
       if (file.match(/thumbnail/i)) {
         acc[element].thumbnail = file;
