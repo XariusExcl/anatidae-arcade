@@ -266,6 +266,7 @@ const template = () => {
       }
 
       pollGamepad();
+      
       if (input.left.justPressed && !isAttractMode) {
         if (selectedGame != 0) {
           scrollHighscoreTimer = 0;
@@ -293,9 +294,9 @@ const template = () => {
         });
       }
 
-      if (isAttractMode && (input.up.justPressed || input.down.justPressed || input.left.justPressed || input.right.justPressed || input.validate.justPressed || input.cancel.justPressed)) {
+      if (input.up.justPressed || input.down.justPressed || input.left.justPressed || input.right.justPressed || input.validate.justPressed || input.cancel.justPressed) {
         attractModeTimer = 0;
-        hideAttractMode();
+        if (isAttractMode) hideAttractMode();
       }
 
       keyboardReset();
