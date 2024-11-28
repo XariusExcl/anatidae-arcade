@@ -80,21 +80,15 @@ const template = () => {
     const gamesVithVideo = gameNames.filter((game) => games[game].video !== undefined);
     const showAttractMode = () => {
       if (gamesVithVideo.length === 0) return;
-      // Pick a random video from the games array, if it has a video attribute
       const attactModeGame = gamesVithVideo[Math.floor(Math.random() * gamesVithVideo.length)];
       const videoSrc = '/' + attactModeGame + '/' + games[attactModeGame].video;
-      // Add it to src of video el
       videoPlayerElement.src = videoSrc;
-      // Fill divs with the info
       videoTitleElement.innerText = games[attactModeGame].name ?? attactModeGame;
       videoCatchphraseElement.innerText = games[attactModeGame].catchphrase ?? "Jouez maintenant !";
-      // Show div
       videoWrapperElement.classList.remove('fade-out');
       videoWrapperElement.classList.add('fade-in');
-      // Set some global flag to hide video when action is performed
       isAttractMode = true;
 
-      // Set timeout to hide
       setTimeout(() => {
         hideAttractMode();
       }, 19000);
