@@ -97,13 +97,15 @@ const template = () => {
       // Set timeout to hide
       setTimeout(() => {
         hideAttractMode();
-        isAttractMode = false;
       }, 19000);
     }
 
     const hideAttractMode = () => {
       videoWrapperElement.classList.remove('fade-in');
       videoWrapperElement.classList.add('fade-out');
+      setTimeout(() => {
+        isAttractMode = false;
+      }, 1000);
     }
     
     // Gamepad navigation
@@ -270,21 +272,21 @@ const template = () => {
       }
 
       pollGamepad();
-      if (input.left.justPressed) {
+      if (input.left.justPressed && !isAttractMode) {
         if (selectedGame != 0) {
           scrollHighscoreTimer = 0;
           selectedGame = selectedGame - 1;
           updateSelectedGame();
         };
       }
-      if (input.right.justPressed) {
+      if (input.right.justPressed && !isAttractMode) {
         if (selectedGame != gamesSection.children.length - 1) {
           scrollHighscoreTimer = 0;
           selectedGame = selectedGame + 1;
           updateSelectedGame();
         }
       }
-      if (input.validate.justPressed) {
+      if (input.validate.justPressed && !isAttractMode) {
         scrollHighscoreTimer = 0;
         // TODO : fixme
         input.validate.justPressed = false;
