@@ -404,11 +404,11 @@ const template = () => {
   </section>
   <div id="video-wrapper" class="fade-out absolute z-1 w-full h-full top-0 left-0">
     <video id="video-player" height="1080" width="1920" autoplay muted loop src="testgame/sample.mp4" class="absolute z-1 w-full h-full top-0 left-0"></video>
-    <div id="video-title" class="absolute z-1 top-10 left-10 text-7xl font-bold bg-gray-950 bg-opacity-80 p-5 rounded-2xl">Wreckless Bar</div>
-    <div id="video-catchphrase" class="absolute z-1 top-40 left-24 text-4xl font-bold bg-gray-950 bg-opacity-80 p-5 rounded-2xl">Jouez maintenant !</div>
-    <div class="absolute bottom-40 left-40 text-8xl font-bold bg-gray-950 bg-opacity-80 pt-10 pb-14 pl-6 pr-9 rounded-full animate-bounce flex"><img src="joystickUp.png" style="width:96px;height:96px;"/><span>↓</span></div>
+    <div id="video-title" class="absolute z-1 top-10 left-10 text-7xl font-bold bg-gray-950 bg-opacity-60 p-5 rounded-2xl">Wreckless Bar</div>
+    <div id="video-catchphrase" class="absolute z-1 top-40 left-24 text-4xl font-bold bg-gray-950 bg-opacity-60 p-5 rounded-2xl">Jouez maintenant !</div>
+    <div class="absolute bottom-40 left-40 text-8xl font-bold bg-gray-950 bg-opacity-60 pt-10 pb-14 pl-6 pr-9 rounded-full animate-bounce flex"><img src="joystickUp.png" style="width:96px;height:96px;"/><span>↓</span></div>
   </div>
-  <footer class="flex absolute bottom-0 w-full py-3 pl-8 pr-16 text-center border-t border-zinc-700 justify-between">
+  <footer class="flex absolute bottom-0 w-full py-3 pl-8 pr-16 text-center border-t border-zinc-700 bg-gray-950 bg-opacity-60 justify-between">
     <div class="flex text-xl">
       <img src="backward.png" style="max-width:32px;max-height:32px;" />
       <img src="joystickUp.png" style="max-width:32px;max-height:32px;" />
