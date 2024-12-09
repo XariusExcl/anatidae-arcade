@@ -3,8 +3,8 @@
     "description": "Un faux jeu pour tester si l'interface fonctionne correctement. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
     "creator": "Jules Sabater",
     "year": 2024,
-    "type": "Arcade",
-    "players": "1 ou 2 joueurs",
+    "type": "Test",
+    "players": "Pas beaucoup",
     "highscores": [{
         "name": "XAR",
         "score": 1000
