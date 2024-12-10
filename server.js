@@ -3,7 +3,7 @@ import template from './src/template.js';
 import config from './config.js';
 import fs from "fs";
 
-const rudeNames = ["ASS", "FUC", "FUK", "FUQ", "FCK", "COK", "DIC", "DIK", "DIQ", "DIX", "DCK", "PNS", "PSY", "FAG", "FGT", "NGR", "NIG", "CNT", "SHT", "CUM", "CLT", "JIZ", "JZZ", "GAY", "GEI", "GAI", "VAG", "VGN", "FAP", "PRN", "JEW", "PUS", "TIT", "KYS", "KKK", "SEX", "SXX", "XXX", "NUT", "LSD", "ORL", "ANL", "PD", "SLP", "CON", "BIT", "NTM"];
+const rudeNames = ["ASS", "FUC", "FUK", "FUQ", "FCK", "COK", "DIC", "DIK", "DIQ", "DIX", "DCK", "PNS", "PSY", "FAG", "FGT", "NGR", "NIG", "CNT", "SHT", "CUM", "CLT", "JIZ", "JZZ", "GAY", "GEI", "GAI", "VAG", "VGN", "FAP", "PRN", "JEW", "PUS", "TIT", "KYS", "KKK", "SEX", "SXX", "XXX", "NUT", "LSD", "ORL", "ANL", "PD", "SLP", "CON", "BIT", "NTM", "FDP", "ZOB", "CUL", "DTC", "BBC"];
 const transpositions = { "0": "O", "1": "I", "2": "Z", "3": "E", "4": "A", "5": "S", "6": "G", "7": "T" }
 
 const filter = (name) => {
