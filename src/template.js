@@ -260,7 +260,7 @@ const template = () => {
         updateHighscores();
       }
       
-      if (attractModeTimer > 40000) {
+      if (attractModeTimer > 32000) {
         attractModeTimer = 0;
         showAttractMode();
       }
