@@ -13,6 +13,9 @@ const template = () => {
       if (file.match(/^.+\.mp4/i)) {
         acc[element].video = file;
       }
+      if (file.match(/^data\.json/i)) {
+        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file))};
+      }
     });
     return acc;
   }, {});
@@ -398,7 +401,7 @@ const template = () => {
     </div>
   </section>
   <div id="video-wrapper" class="fade-out absolute z-1 w-full h-full top-0 left-0">
-    <video id="video-player" height="1080" width="1920" autoplay muted loop src="testgame/sample.mp4" class="absolute z-1 w-full h-full top-0 left-0"></video>
+    <video id="video-player" height="1080" width="1920" autoplay muted loop src="" class="absolute z-1 w-full h-full top-0 left-0"></video>
     <div id="video-title" class="absolute z-1 top-10 left-10 text-7xl font-bold bg-gray-950 bg-opacity-60 p-5 rounded-2xl">Wreckless Bar</div>
     <div id="video-catchphrase" class="absolute z-1 top-40 left-24 text-4xl font-bold bg-gray-950 bg-opacity-60 p-5 rounded-2xl">Jouez maintenant !</div>
     <div class="absolute bottom-40 left-40 text-8xl font-bold bg-gray-950 bg-opacity-60 pt-10 pb-14 pl-6 pr-9 rounded-full animate-bounce flex"><img src="joystickUp.png" style="width:96px;height:96px;"/><span>↓</span></div>
