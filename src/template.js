@@ -68,7 +68,21 @@ const template = () => {
         for (let i = 0; i < hscount; i++) {
           if (i < game.highscores.length) {
             highscoreElements[i].querySelector('.hs-name').textContent = game.highscores[i].name ?? '???';
-            highscoreElements[i].querySelector('.hs-score').textContent = game.highscores[i].score ?? '???';
+            let scoreText = '???';
+            if (game.highscores[i].score !== undefined) {
+              switch (game.config?.scoreType) {
+                case 'time':
+                  scoreText = \`\${Math.floor(game.highscores[i].score/60)}:\${new Date(game.highscores[i].score * 1000).toISOString().substr(17, 6)}\`;
+                  break;
+                case 'distance':
+                  scoreText = game.highscores[i].score + (game.config.scoreUnit ?? 'm');
+                  break;
+                default:
+                  scoreText = game.highscores[i].score;
+                  break;
+              }
+            }
+            highscoreElements[i].querySelector('.hs-score').textContent = scoreText;
           } else {
             highscoreElements[i].querySelector('.hs-name').textContent = ''
             highscoreElements[i].querySelector('.hs-score').textContent = '';
