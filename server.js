@@ -32,7 +32,7 @@ const getGameData = (req, res) => {
   if (!fs.existsSync(`public/${game}/data.json`)) {
     return {};
   }
-  return JSON.parse(fs.readFileSync(`public/${game}/data.json`, {encoding: 'utf-8'}));
+  return JSON.parse(fs.readFileSync(`public/${game}/data.json`, { encoding: 'utf-8' }));
 }
 
 // ------ FRONTEND ------
@@ -115,7 +115,7 @@ app.post('/api/', (req, res) => {
       existingEntry.timestamp = Date.now();
     }
     dataObj.highscores = dataObj.highscores.sort((a, b) => b.score - a.score);
-    if (!writeDataFile(req.query.game, dataObj)){
+    if (!writeDataFile(req.query.game, dataObj)) {
       res.status(500).json({ error: 'Failed to write data file.' });
       return;
     }
@@ -134,7 +134,7 @@ app.post('/api/playcount', (req, res) => {
     dataObj.playcount = 0;
   }
   dataObj.playcount++;
-  if (!writeDataFile(req.query.game, dataObj)){
+  if (!writeDataFile(req.query.game, dataObj)) {
     res.status(500).json({ error: 'Failed to write data file.' });
     return;
   }
@@ -151,7 +151,7 @@ app.post('/api/extradata', (req, res) => {
   for (const key in req.body) {
     dataObj.extradata[key] = req.body[key];
   }
-  if (!writeDataFile(req.query.game, dataObj)){
+  if (!writeDataFile(req.query.game, dataObj)) {
     res.status(500).json({ error: 'Failed to write data file.' });
     return;
   }
@@ -159,4 +159,4 @@ app.post('/api/extradata', (req, res) => {
 });
 
 app.listen(config.port);
-console.log(`👾 Anatidae-server(v1.0) listening on port ${config.port}.`);
+console.log(`👾 Anatidae-server(v${config.version}) listening on port ${config.port}.`);

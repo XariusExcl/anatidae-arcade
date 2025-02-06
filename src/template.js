@@ -1,4 +1,5 @@
 import fs from "fs";
+import config from "../config.js";
 
 const template = () => {
   const games = fs.readdirSync("public/").reduce((acc, element) => {
@@ -413,7 +414,7 @@ const template = () => {
       <img src="forward.png" style="max-width:32px;max-height:32px;" />
       <span style="align-self:center;"> Navigation</span>
     </div>
-    <div class="text-sm" style="align-self:center; margin-left:-100px">Anatidae Arcade - IUT de Troyes</div>
+    <div class="text-sm" style="align-self:center; margin-left:-100px">Anatidae Arcade (v${config.version}) - IUT de Troyes</div>
     <div class="flex text-xl">
       <span style="align-self:center;"> Valider</span>
       <img src="button1.png" style="max-width:32px;max-height:32px;" />
