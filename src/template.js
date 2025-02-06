@@ -61,24 +61,28 @@ const template = () => {
           if (i >= gameNames.length) return;
           i++;
         }
+        
         const game = games[gameNames[currentGameHighscore]];
-        const hscount = highscoreElements.length;
-
+        const hsElementCount = highscoreElements.length;
+        const hsCount = game.highscores.length;
+        const reverseScoreSort = game.config?.scoreSort === "asc";
+        
         highscoreTitleElement.innerHTML = '<i class="text-3xl font-bold mr-1">' + game.name + "</i> Highscores : ";
-        for (let i = 0; i < hscount; i++) {
-          if (i < game.highscores.length) {
-            highscoreElements[i].querySelector('.hs-name').textContent = game.highscores[i].name ?? '???';
+        for (let i = 0; i < hsElementCount; i++) {
+          if (i < hsCount) {
+            const highscore = reverseScoreSort ? game.highscores[hsCount - i - 1] : game.highscores[i];
+            highscoreElements[i].querySelector('.hs-name').textContent = highscore.name ?? '???';
             let scoreText = '???';
-            if (game.highscores[i].score !== undefined) {
+            if (highscore.score !== undefined) {
               switch (game.config?.scoreType) {
                 case 'time':
-                  scoreText = \`\${Math.floor(game.highscores[i].score/60)}:\${new Date(game.highscores[i].score * 1000).toISOString().substr(17, 6)}\`;
+                  scoreText = new Date(highscore.score * 1000).toISOString().substr(12, (highscore.score<3600)?10:7).replace(/^[0:]+/, '');
                   break;
                 case 'distance':
-                  scoreText = game.highscores[i].score + (game.config.scoreUnit ?? 'm');
+                  scoreText = highscore.score + (game.config.scoreUnit ?? 'm');
                   break;
                 default:
-                  scoreText = game.highscores[i].score;
+                  scoreText = highscore.score;
                   break;
               }
             }

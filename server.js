@@ -19,8 +19,7 @@ const writeDataFile = (game, dataObj) => {
   return true;
 }
 
-const getGameData = (req, res) => {
-  const game = req.query.game;
+const gameNameValidation = (game, req, res) => {
   if (!game) {
     res.status(400).json({ error: 'No game specified.' });
     return false;
@@ -29,10 +28,28 @@ const getGameData = (req, res) => {
     res.status(404).json({ error: 'Game not found. Does the folder exist in public/?' });
     return false;
   }
+  return true;
+}
+
+const getGameData = (req, res) => {
+  const game = req.query.game;
+  if (!gameNameValidation(game, req, res)) return false;
+
   if (!fs.existsSync(`public/${game}/data.json`)) {
     return {};
   }
   return JSON.parse(fs.readFileSync(`public/${game}/data.json`, { encoding: 'utf-8' }));
+}
+
+const getConfigData = (req, res) => {
+  const game = req.query.game;
+  if (!gameNameValidation(game, req, res)) return false;
+  
+  if (!fs.existsSync(`public/${game}/info.json`)) {
+    return {};
+  }
+  const infoJson = JSON.parse(fs.readFileSync(`public/${game}/info.json`, { encoding: 'utf-8' }));
+  return infoJson.config ?? {};
 }
 
 // ------ FRONTEND ------
@@ -105,8 +122,9 @@ app.post('/api/', (req, res) => {
 
   const existingEntry = dataObj.highscores.find(entry => entry.name == filteredName);
   console.log(existingEntry);
+  const reversedScoreSort = getConfigData(req, res).scoreSort === 'asc';
 
-  if (!existingEntry || existingEntry.score < req.body.score) {
+  if (!existingEntry || (existingEntry.score < req.body.score && !reversedScoreSort) || (existingEntry.score > req.body.score && reversedScoreSort)) {
     if (!existingEntry) {
       dataObj.highscores.push({ name: filteredName, score: req.body.score, timestamp: Date.now() });
     }
