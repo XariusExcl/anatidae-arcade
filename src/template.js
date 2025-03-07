@@ -15,7 +15,7 @@ const template = () => {
         acc[element].video = file;
       }
       if (file.match(/^data\.json/i)) {
-        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file))};
+        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)), ...acc[element]};
       }
     });
     return acc;
