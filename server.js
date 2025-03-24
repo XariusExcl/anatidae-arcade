@@ -44,7 +44,7 @@ const getGameData = (req, res) => {
 const getConfigData = (req, res) => {
   const game = req.query.game;
   if (!gameNameValidation(game, req, res)) return false;
-  
+
   if (!fs.existsSync(`public/${game}/info.json`)) {
     return {};
   }
@@ -60,6 +60,35 @@ app.get('/', (req, res) => {
 });
 app.use(express.static('public'))
 app.use(express.static('assets'))
+
+// Returns a tree stucture json with every file and folder node recursively present in the StreamingAssets folder of a game, if it exists.
+app.use('/:game/StreamingAssets', (req, res, next) => {
+  const game = req.params.game;
+  if (!gameNameValidation(game, req, res)) return;
+
+  if (!fs.existsSync(`public/${game}/StreamingAssets`)) {
+    res.status(404).json({ error: 'StreamingAssets folder not found. Does the folder exist in public/[game]/?' });
+    return;
+  }
+
+  const walkSync = (dir, filelist = []) => {
+    fs.readdirSync(dir).forEach(file => {
+      const path = `${dir}/${file}`;
+
+      if (fs.statSync(path).isDirectory()) {
+        filelist.push({
+          name: file, type: 'folder', children: walkSync(path, [])
+        });
+      }
+      else 
+        filelist.push({ name: file, type: 'file', path: path.replace('public', '')});
+    });
+    return filelist;
+  }
+
+  const tree = walkSync(`public/${game}/StreamingAssets`);
+  res.json(tree);
+});
 
 // ------ API ------
 app.get('/api/', (req, res) => {
