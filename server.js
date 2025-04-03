@@ -75,18 +75,15 @@ app.use('/:game/StreamingAssets', (req, res, next) => {
     fs.readdirSync(dir).forEach(file => {
       const path = `${dir}/${file}`;
 
-      if (fs.statSync(path).isDirectory()) {
-        filelist.push({
-          name: file, isDirectory: true, children: walkSync(path, [])
-        });
-      }
+      if (fs.statSync(path).isDirectory())
+        filelist.push({ name: file, isDirectory: true, path: path.replace('public', ''), children: walkSync(path, []) });
       else 
-        filelist.push({ name: file, isDirectory: false, path: path.replace('public', '')});
+        filelist.push({ name: file, isDirectory: false, path: path.replace('public', '') });
     });
     return filelist;
   }
 
-  const tree = {name: "StreamingAssets", isDirectory: true, children: walkSync(`public/${game}/StreamingAssets`)};
+  const tree = { name: "StreamingAssets", isDirectory: true, children: walkSync(`public/${game}/StreamingAssets`) };
   res.json(tree);
 });
 
