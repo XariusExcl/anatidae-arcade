@@ -190,11 +190,21 @@ app.post('/api/extradata', (req, res) => {
   if (!dataObj) return;
 
   if (!dataObj.extradata) {
-    dataObj.extradata = {};
+    dataObj.extradata = [];
   }
-  for (const key in req.body) {
-    dataObj.extradata[key] = req.body[key];
+  if (!req.body.key || !req.body.value) {
+    res.status(400).json({ error: 'Key and value required in body of request.' });
+    return;
   }
+
+  const existingEntry = dataObj.extradata.find(entry => entry.key === req.body.key);
+  if (existingEntry) {
+    existingEntry.value = req.body.value;
+  }
+  else {
+    dataObj.extradata.push({ key: req.body.key, value: req.body.value });
+  }
+  
   if (!writeDataFile(req.query.game, dataObj)) {
     res.status(500).json({ error: 'Failed to write data file.' });
     return;
