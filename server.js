@@ -212,5 +212,14 @@ app.post('/api/extradata', (req, res) => {
   res.json({ success: true });
 });
 
+app.post('/api/nameValid', (req, res) => {
+  if (req.body.name === undefined) {
+    res.status(400).json({ error: 'Name required in body of request.' });
+    return;
+  }
+  res.json({ valid: (filter(req.body.name))?true:false });
+  return;
+});
+
 app.listen(config.port);
 console.log(`👾 Anatidae-server(v${config.version}) listening on port ${config.port}.`);

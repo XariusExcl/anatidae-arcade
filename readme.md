@@ -15,25 +15,30 @@ Start server with `node server.js`
 
 ### Request type: GET
 - `/api/?game={gameName}`
-  - Returns `{ error: string }` on bad requests (400)
   - Returns the highscores as an array of objects : `[{ name:string, score:number, timestamp:number }, {...}]`.
+  - Returns `{ error: string }` on bad requests (400)
 
 - `/api/extradata/?game={gameName}`
-  - Returns `{ error: string }` on bad requests (400)
   - Returns the extra data object stored (if exists).
+  - Returns `{ error: string }` on bad requests (400)
 
 - `/api/playcount/?game={gameName}`
-  - Returns `{ error: string }` on bad requests (400)
   - Returns the playcount as an object `{ playcount: number }`.
+  - Returns `{ error: string }` on bad requests (400)
 
 ### Request type: POST
 
-- `/api/?game={gameName}` (Body: `{ name:string, score:number }`)
+- `/api/nameValid` (Body: `{ name:string }`)
+  - Returns `{ valid: true }` if name is allowed
+  - Returns `{ valid: false }` if name isn't allowed
   - Returns `{ error: string }` on bad requests (400)
-  - Returns `{ success: false }` if existing highscore is higher
+
+- `/api/?game={gameName}` (Body: `{ name:string, score:number }`)
   - Returns `{ success: true }` on success
+  - Returns `{ success: false }` if existing highscore is higher
+  - Returns `{ error: string }` on bad requests (400)
 
 
 - `/api/extradata/?game={gameName}` (Body: `object`)
-  - Returns `{ error: string }` on bad requests (400)
   - Returns `{ success: true }` on success
+  - Returns `{ error: string }` on bad requests (400)
