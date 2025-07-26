@@ -36,6 +36,18 @@ const template = () => {
       frameUpdate();
     }
 
+    const siPrefixes = ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+    function getSiPrefixedNumber(number, limit) {
+      if (number < limit) return number.toString();
+      const EXP_STEP_SIZE = 3;
+      const base = Math.floor(Math.log10(Math.abs(number)));
+      const siBase = (base < 0 ? Math.ceil : Math.floor)(base / EXP_STEP_SIZE);
+      const prefix = siPrefixes[siBase];
+      if (siBase === 0) return number.toString();
+      const baseNumber = parseFloat((number / Math.pow(10, siBase * EXP_STEP_SIZE)).toFixed(2));
+      return \`\${baseNumber}\${prefix}\`;
+    };
+
     // Data
     const games = ${JSON.stringify(games)};
     const gameNames = Object.keys(games);
@@ -79,10 +91,10 @@ const template = () => {
                   scoreText = new Date(highscore.score * 1000).toISOString().substr(12, (highscore.score<3600)?10:7).replace(/^[0:]+/, '');
                   break;
                 case 'distance':
-                  scoreText = highscore.score + (game.config.scoreUnit ?? 'm');
+                  scoreText = getSiPrefixedNumber(highscore.score) + (game.config.scoreUnit ?? 'm');
                   break;
                 default:
-                  scoreText = highscore.score;
+                  scoreText = getSiPrefixedNumber(highscore.score, 1e6);
                   break;
               }
             }
