@@ -5,7 +5,7 @@
 Anatidae Arcade est la WebUI de la borne d'arcade Anatidae. Elle permet de :
 - Sélectionner des jeux WebGL présents dans le dossier `public/`,
 - Stocker et récupérer des highscores au travers d'une [API](#5-documentation-de-lapi), ainsi que des données arbitraires "key-value" (appelées *extradata*),
-- Afficher les métadonnées sur un jeu : 
+- Afficher les métadonnées d'un jeu : titre, description, créateurs, nombre de joueurs, année, genre,
 - Jouer des vidéos "Attract mode" lorsque la borne n'est pas utilisée,
 - Servir le dossier `StreamingAssets/` d'un jeu s'il est présent (Unity).
 
@@ -31,6 +31,7 @@ Anatidae Arcade est la WebUI de la borne d'arcade Anatidae. Elle permet de :
 - 2 Joueurs, avec pour chacun :
   - **1 Joystick 2-axes** (axis 0, axis 1),
   - **7 boutons** (0, 1, 2, 3, 4, 5, 6).
+
 Le bouton "Start" (bouton blanc) est attribué au **bouton 8 du premier contrôleur**.
 
 <img height="450" alt="buttons" src="https://github.com/user-attachments/assets/a076e2b7-b468-40dc-ad31-cf649f92b45a" />
