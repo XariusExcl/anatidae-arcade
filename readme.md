@@ -52,7 +52,7 @@ Ouvrez un terminal dans le dossier racine et démarrez la WebUI avec la commande
 
 ## 4. Déploiement d’un jeu sur Anatidae
 
-Pour déployer un jeu sur la borne d'arcade, créez un dossier dans le dossier `public/` nommé avec le nom de votre jeu. Ce dossier contiendra tous vos fichiers nécessaires au fonctionnement de votre jeu.
+Pour déployer un jeu sur la borne d'arcade, créez un dossier dans le dossier `public/` nommé avec le nom de votre jeu. Ce dossier contiendra tous vos fichiers nécessaires au fonctionnement de votre jeu, et sera utilisé pour accéder à l'[API](#5-documentation-de-lapi).
 
 ### Fonctionnalités requises :
 
@@ -71,7 +71,7 @@ Chaque jeu mis sur la borne a besoin de ces 3 fichiers pour fonctionner correcte
 - **thumbnail.png :** L’image de couverture de votre jeu, affichée en fond et en miniature sur l'interface (privilégiez un format carré avec une résolution de max de 1920x1920).
 - **info.json :** Les informations de votre jeu, vu en détail ci-dessous.
 
-<img height="320" alt="data" src="https://github.com/user-attachments/assets/6f8ccb5a-879b-40e7-9ee0-6da9914239d2" />
+<img height="320" alt="info" src="https://github.com/user-attachments/assets/83327c73-aec1-48f6-aaea-07a3d4563c4f">
 
 ### info.json
 
@@ -122,6 +122,7 @@ Optionnellement, vous pouvez mettre un fichier **attract.mp4** dans le dossier d
 > Les vidéos sont jouées sans son. Il n'est donc pas nécessaire de faire du sound design.
 
 ## 5. Documentation de l'API
+Pour accéder à l'API, vous devez fournir en paramètre `gameName` votre nom de jeu, correspondant au nom du dossier contenant votre jeu dans `public/`.
 
 - (type GET) `/api/?game={gameName}` 
   - Returns the highscores as an array of objects : `[{ name:string, score:number, timestamp:number }, {...}]`,
