@@ -61,7 +61,23 @@ Pour déployer un jeu sur la borne d'arcade, créez un dossier dans le dossier `
 > - Le retour au menu principal lors de l'appui du **bouton blanc** (instantanément, ou sur un appui long de max 1.5s)
 > - Un retour automatique si aucun bouton ou joystick n'a éte touché pendant **60 secondes**.
 
-Le retour au menu se fait en modifiant `window.location.href` par [localhost:3000](http://localhost:3000).
+Le retour au menu se fait en revenant sur la page d'accueil, sur l'url [localhost:3000](http://localhost:3000).
+- En Javascript : `window.location.href = "http://localhost:3000"`
+- Dans Godot Engine : `JavaScriptBridge.eval("window.location.href='http://localhost:3000'")`
+- Dans Unity Engine :
+  1. Créer un fichier `BackToMenu.jslib` dans le dossier `Assets/Plugin` (à créer si nécessaire) avec le contenu :
+  ```
+  mergeInto(LibraryManager.library, {
+    BackToMenu: function() {
+      window.location.href = "http://localhost:3000";
+    }
+  });
+  ```
+  2. Importer la méthode dans un script avec : `[DllImport("__Internal")] public static extern void BackToMenu();`
+  3. Appeler la méthode `BackToMenu` aux endroits appropriés de votre code.
+
+> [!TIP]
+> Tout le système de retour au menu est implémenté dans le [Anatidae Toolkit](https://github.com/XariusExcl/anatidae-toolkit) pour Unity.
 
 ### Fichiers requis :
 
