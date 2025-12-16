@@ -15,7 +15,7 @@ const template = () => {
         acc[element].video = file;
       }
       if (file.match(/^data\.json/i)) {
-        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)), ...acc[element]};
+        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)).highscores, ...acc[element]};
       }
     });
     return acc;
@@ -309,7 +309,7 @@ const template = () => {
         };
       }
       if (input.right.justPressed && !isAttractMode) {
-        if (selectedGame != gamesSection.children.length - 1) {
+        if (selectedGame != gameElements.length - 1) {
           scrollHighscoreTimer = 0;
           selectedGame = selectedGame + 1;
           updateSelectedGame();

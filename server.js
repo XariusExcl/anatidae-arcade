@@ -61,6 +61,26 @@ app.get('/', (req, res) => {
 app.use(express.static('public'))
 app.use(express.static('assets'))
 
+// ------ PROXY ------
+app.get("/proxy", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  const { ippage, param } = req.query;
+
+  if (!ippage) {
+    return res.status(400).send("Missing ippage parameter");
+  }
+
+  try {
+    const url = `https://${ippage}?parametre=${encodeURIComponent(param || "")}`;
+    const response = await fetch(url);
+    const text = await response.text();
+    res.send(text);
+  } catch (err) {
+    res.status(500).send("Error fetching remote URL");
+  }
+});
+
+// ------ STREAMING ASSETS ------
 // Returns a tree stucture json with every file and folder node recursively present in the StreamingAssets folder of a game, if it exists.
 app.use('/:game/StreamingAssets', (req, res, next) => {
   const game = req.params.game;
