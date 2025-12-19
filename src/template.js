@@ -4,20 +4,22 @@ import config from "../config.js";
 const template = () => {
   const games = fs.readdirSync("public/").reduce((acc, element) => {
     acc[element] = {};
-    fs.readdirSync("public/" + element).forEach((file) => {
-      if (file.match(/^info\.json/i)) {
-        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)), ...acc[element]};
-      }
-      if (file.match(/thumbnail/i)) {
-        acc[element].thumbnail = file;
-      }
-      if (file.match(/^.+\.mp4/i)) {
-        acc[element].video = file;
-      }
-      if (file.match(/^data\.json/i)) {
-        acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)).highscores, ...acc[element]};
-      }
-    });
+    if (fs.statSync("public/" + element).isDirectory) {
+      fs.readdirSync("public/" + element).forEach((file) => {
+        if (file.match(/^info\.json$/i)) {
+          acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)), ...acc[element]};
+        }
+        if (file.match(/thumbnail/i)) {
+          acc[element].thumbnail = file;
+        }
+        if (file.match(/^.+\.mp4$/i)) {
+          acc[element].video = file;
+        }
+        if (file.match(/^data\.json$/i)) {
+          acc[element] = {...JSON.parse(fs.readFileSync("public/" + element + "/" + file)), ...acc[element]};
+        }
+      });
+    }
     return acc;
   }, {});
 

@@ -8,8 +8,8 @@ const transpositions = { "0": "O", "1": "I", "2": "Z", "3": "E", "4": "A", "5": 
 
 const filter = (name) => {
   name.toUpperCase();
-  name = name.split('').filter((char) => char !== "_").map((char) => transpositions[char] || char).join('');
-  if (rudeNames.includes(name))
+  transname = name.split('').filter((char) => char !== "_").map((char) => transpositions[char] || char).join('');
+  if (rudeNames.includes(transname))
     return false
   else return name;
 }
