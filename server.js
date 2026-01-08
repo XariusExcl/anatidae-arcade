@@ -75,6 +75,7 @@ app.get("/proxy", async (req, res) => {
     const text = await response.text();
     res.send(text);
   } catch (err) {
+    console.log(err);
     res.status(500).send("Error fetching remote URL");
   }
 });
@@ -96,7 +97,7 @@ app.post("/proxy", async (req, res) => {
     const text = await response.text();
     res.send(text);
   } catch (err) {
-    console.log("error");
+    console.log(err);
     res.status(500).send("Error fetching remote URL");
   }
 });

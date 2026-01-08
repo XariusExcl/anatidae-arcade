@@ -43,7 +43,7 @@ Le bouton "Start" (bouton blanc) est attribué au **bouton 8 du premier contrôl
 > Vous pouvez voir l'attribution des boutons et joysticks de votre manette avec le site [Hardware Tester](https://hardwaretester.com/gamepad).
 
 ## 2. Installation de la WebUI en local
-1. Avoir `NodeJS` et `npm` installés,
+1. Avoir `NodeJS`(>=v18) et `npm` installés,
 2. Cloner le repo,
 3. Dans le dossier racine, ouvrir un terminal et lancez la commande : `npm install`.
 
