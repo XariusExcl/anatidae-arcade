@@ -64,18 +64,39 @@ app.use(express.static('assets'))
 // ------ PROXY ------
 app.get("/proxy", async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  const { ippage, param } = req.query;
+  const { url } = req.query;
 
-  if (!ippage) {
-    return res.status(400).send("Missing ippage parameter");
+  if (!url) {
+    return res.status(400).send("Missing url parameter");
   }
 
   try {
-    const url = `https://${ippage}?parametre=${encodeURIComponent(param || "")}`;
     const response = await fetch(url);
     const text = await response.text();
     res.send(text);
   } catch (err) {
+    res.status(500).send("Error fetching remote URL");
+  }
+});
+
+app.post("/proxy", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  const { url } = req.query;
+  const data = req.body;
+
+  if (!url) {
+    return res.status(400).send("Missing url parameter");
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: data
+    });
+    const text = await response.text();
+    res.send(text);
+  } catch (err) {
+    console.log("error");
     res.status(500).send("Error fetching remote URL");
   }
 });
