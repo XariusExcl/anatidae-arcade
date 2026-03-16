@@ -92,7 +92,10 @@ app.post("/proxy", async (req, res) => {
   try {
     const response = await fetch(url, {
       method: 'POST',
-      body: data
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data)
     });
     const text = await response.text();
     res.send(text);
