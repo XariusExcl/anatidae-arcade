@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import template from './src/template.js';
 import config from './config.js';
 import fs from "fs";
@@ -55,6 +56,12 @@ const getConfigData = (req, res) => {
 // ------ FRONTEND ------
 const app = express();
 app.use(express.json());
+app.use(cors({
+  origin: true, // Allow requests from any origin (todo: ?)
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}))
 app.get('/', (req, res) => {
   res.send(template());
 });
@@ -81,6 +88,59 @@ app.get("/proxy", async (req, res) => {
 });
 
 app.post("/proxy", async (req, res) => {
+  console.log(req.headers);
+  const { url } = req.query;
+  const data = req.body;
+
+  if (!url) {
+    return res.status(400).send("Missing url parameter");
+  }
+
+  try {
+    const headers = { ...req.headers };
+    delete headers['host'];
+    delete headers['connection'];
+    delete headers['content-length'];
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(data)
+    });
+    const text = await response.text();
+    res.send(text);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error fetching remote URL");
+  }
+});
+
+// ------ PROXY MIX&MESS ------
+app.get("/proxy-mixmess", async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).send("Missing url parameter");
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Accept": req.headers["accept"] || "*/*",
+        "X-API-KEY": req.headers["x-api-key"] || ""
+      }
+    });
+
+    const text = await response.text();
+    res.status(response.status).send(text);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error fetching remote URL");
+  }
+});
+
+app.post("/proxy-mixmess", async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   const { url } = req.query;
   const data = req.body;
@@ -91,14 +151,17 @@ app.post("/proxy", async (req, res) => {
 
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": req.headers["content-type"] || "application/json",
+        "Accept": req.headers["accept"] || "*/*",
+        "X-API-KEY": req.headers["x-api-key"] || ""
       },
       body: JSON.stringify(data)
     });
+
     const text = await response.text();
-    res.send(text);
+    res.status(response.status).send(text);
   } catch (err) {
     console.log(err);
     res.status(500).send("Error fetching remote URL");
