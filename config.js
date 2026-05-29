@@ -1,5 +1,5 @@
 const config = {
-  version: "1.5.3",
+  version: "1.5.4",
   defaultUrl: '/',
   staticUrl: '/public',
   port: 3000,

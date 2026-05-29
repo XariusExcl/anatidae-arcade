@@ -351,12 +351,12 @@ const template = () => {
     ${Object.keys(games).map((element) => {
         return `
           <div link="${element}" class="grid place-content-center min-w-96 h-96 bg-white shadow-xl mx-5 hover:scale-110 transition-all">
-            <a href="/${element}" class="max-w-96 w-96 h-96 shadow-xl text-slate-700 text-center text-5xl font-bold bg-slate-600">
+            <a href="/${element}" class="relative max-w-96 w-96 h-96 shadow-xl text-slate-700 text-center text-5xl font-bold bg-slate-600">
               <img 
                 class="w-full h-full object-cover"
                 src="/${element}/${games[element].thumbnail}" alt="${element}"
               >
-              <div class="title text-3xl text-center">${games[element].name ?? element}</div>
+              <div class="absolute title text-3xl text-center" style="transform: translateX(calc((386px - 100%) / 2));">${games[element].name ?? element}</div>
             </a>
           </div>`
       }).join('')}
